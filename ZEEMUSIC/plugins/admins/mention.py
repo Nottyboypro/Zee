@@ -2,7 +2,7 @@ import asyncio
 from pyrogram.enums import ChatType, ChatMemberStatus
 from ZEEMUSIC import app
 from pyrogram import filters
-from ZEEMUSIC.utils.Shukla_ban import admin_filter
+from ZEEMUSIC.utils.Zee_ban import admin_filter
 
 
 
