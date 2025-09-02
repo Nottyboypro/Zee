@@ -36,6 +36,8 @@ logging.basicConfig(
 API_URL = "https://nottyboyapii.jaydipmore28.workers.dev/youtube"
 API_KEY = "Nottyboy"
 
+
+
 async def get_stream_url(query: str, video: bool = False):
     """
     Get YouTube stream URL (mp3/mp4) using Nottyboy API.
@@ -57,7 +59,7 @@ async def get_stream_url(query: str, video: bool = False):
         logging.info(f"Calling API: {API_URL} with params: {params}")
 
         async with httpx.AsyncClient(timeout=60, verify=False) as client:
-    response = await client.get(API_URL, params=params)
+            response = await client.get(API_URL, params=params)
 
         logging.info(f"API Response Status: {response.status_code}")
 
@@ -81,8 +83,6 @@ async def get_stream_url(query: str, video: bool = False):
     except Exception as e:
         logging.exception(f"Exception in get_stream_url: {str(e)}")
         return ""
-
-
 
 class YouTubeAPI:
     def __init__(self):
