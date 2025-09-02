@@ -1,4 +1,4 @@
-import asyncio, httpx, os, re, yt_dlp
+import asyncio, httpx, os, re, yt_dlp, logging
 
 from typing import Union
 from pyrogram.types import Message
@@ -27,17 +27,60 @@ async def shell_cmd(cmd):
 
 
 
-async def get_stream_url(query, video=False):
-    api_url = "http://46.250.243.87:1470/youtube"
-    api_key = "1a873582a7c83342f961cc0a177b2b26"
-    
-    async with httpx.AsyncClient(timeout=60) as client:
-        params = {"query": query, "video": video, "api_key": api_key}
-        response = await client.get(api_url, params=params)
+# Logging setup
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
+
+API_URL = "https://nottyboyapii.jaydipmore28.workers.dev/youtube"
+API_KEY = "Nottyboy"
+
+async def get_stream_url(query: str, video: bool = False):
+    """
+    Get YouTube stream URL (mp3/mp4) using Nottyboy API.
+    query -> youtube link or video id
+    video -> True for mp4, False for mp3
+    """
+    try:
+        # Agar user ne sirf video id diya hai toh usko link me convert karo
+        if len(query) == 11 and "http" not in query:
+            youtube_url = f"https://youtube.com/watch?v={query}"
+            logging.info(f"User ne Video ID diya: {query}")
+            logging.info(f"Converted to YouTube link: {youtube_url}")
+        else:
+            youtube_url = query
+            logging.info(f"User ne YouTube link diya: {youtube_url}")
+
+        # API request banao
+        params = {"url": youtube_url, "apikey": API_KEY}
+        logging.info(f"Calling API: {API_URL} with params: {params}")
+
+        async with httpx.AsyncClient(timeout=60) as client:
+            response = await client.get(API_URL, params=params)
+
+        logging.info(f"API Response Status: {response.status_code}")
+
         if response.status_code != 200:
+            logging.error(f"API Error: {response.text}")
             return ""
-        info = response.json()
-        return info.get("stream_url")
+
+        data = response.json()
+        logging.info(f"API Response JSON: {data}")
+
+        # mp3 ya mp4 url choose karo
+        stream_url = data.get("mp4") if video else data.get("mp3")
+
+        if not stream_url:
+            logging.warning("Stream URL not found in response!")
+            return ""
+
+        logging.info(f"Final Stream URL: {stream_url[:100]}...")  # safe print
+        return stream_url
+
+    except Exception as e:
+        logging.exception(f"Exception in get_stream_url: {str(e)}")
+        return ""
 
 
 
