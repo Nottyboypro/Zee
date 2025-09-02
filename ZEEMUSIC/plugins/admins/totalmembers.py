@@ -1,4 +1,4 @@
-from ZEEMUSIC.utils.Shukla_ban import admin_filter
+from ZEEMUSIC.utils.Zee_ban import admin_filter
 import os
 import csv
 from pyrogram import Client, filters

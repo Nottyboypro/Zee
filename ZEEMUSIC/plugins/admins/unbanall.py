@@ -2,7 +2,7 @@ from ZEEMUSIC import app
 from config import OWNER_ID
 from pyrogram import filters, enums
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from ZEEMUSIC.utils.Shukla_ban import admin_filter
+from ZEEMUSIC.utils.Zee_ban import admin_filter
 
 BOT_ID = "6824607634"
 

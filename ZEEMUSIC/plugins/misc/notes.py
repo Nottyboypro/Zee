@@ -1,7 +1,7 @@
 from ZEEMUSIC import app
 from config import BOT_USERNAME
 from pyrogram import filters
-from ZEEMUSIC.utils.Shukla_ban import admin_filter
+from ZEEMUSIC.utils.Zee_ban import admin_filter
 from ZEEMUSIC.mongo.notesdb import *
 from ZEEMUSIC.utils.notes_func import GetNoteMessage, exceNoteMessageSender, privateNote_and_admin_checker
 from ZEEMUSIC.utils.yumidb import user_admin

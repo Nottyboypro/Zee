@@ -4,7 +4,7 @@ from ZEEMUSIC import app, userbot
 from ZEEMUSIC.misc import SUDOERS
 from pyrogram import * 
 from pyrogram.types import *
-from ZEEMUSIC.utils.Shukla_ban import admin_filter
+from ZEEMUSIC.utils.Zee_ban import admin_filter
 
 
 

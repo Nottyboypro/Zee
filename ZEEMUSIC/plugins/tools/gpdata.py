@@ -4,7 +4,7 @@ from pyrogram import filters, Client
 from ZEEMUSIC import app
 from config import OWNER_ID
 from pyrogram.types import Message
-from ZEEMUSIC.utils.Shukla_ban import admin_filter
+from ZEEMUSIC.utils.Zee_ban import admin_filter
 from pyrogram.types import Message, CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
 
 

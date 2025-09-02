@@ -10,7 +10,7 @@ from pyrogram.errors.exceptions.forbidden_403 import ChatWriteForbidden
 from ZEEMUSIC import app
 from config import LOGGER_ID, DEBUG_IGNORE_LOG
 from ZEEMUSIC.utils.exceptions import is_ignored_error
-from ZEEMUSIC.utils.pastebin import SHUKLABin
+from ZEEMUSIC.utils.pastebin import ZEEMUSICBin
 
 
 DEBUG_LOG_FILE = "ignored_errors.log"

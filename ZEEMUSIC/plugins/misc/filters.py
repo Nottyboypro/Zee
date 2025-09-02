@@ -1,7 +1,7 @@
 import re
 from ZEEMUSIC import app
 from config import BOT_USERNAME
-from ZEEMUSIC.utils.Shukla_ban import admin_filter
+from ZEEMUSIC.utils.Zee_ban import admin_filter
 from ZEEMUSIC.mongo.filtersdb import *
 from ZEEMUSIC.utils.filters_func import GetFIlterMessage, get_text_reason, SendFilterMessage
 from ZEEMUSIC.utils.yumidb import user_admin
