@@ -56,8 +56,8 @@ async def get_stream_url(query: str, video: bool = False):
         params = {"url": youtube_url, "apikey": API_KEY}
         logging.info(f"Calling API: {API_URL} with params: {params}")
 
-        async with httpx.AsyncClient(timeout=60) as client:
-            response = await client.get(API_URL, params=params)
+        async with httpx.AsyncClient(timeout=60, verify=False) as client:
+    response = await client.get(API_URL, params=params)
 
         logging.info(f"API Response Status: {response.status_code}")
 
