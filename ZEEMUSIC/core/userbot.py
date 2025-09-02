@@ -20,35 +20,35 @@ assistantids = []
 class Userbot(Client):
     def __init__(self):
         self.one = Client(
-            name="SHUKLAAss1",
+            name="ZEEAss1",
             api_id=config.API_ID,
             api_hash=config.API_HASH,
             session_string=str(config.STRING1),
             no_updates=True,
         )
         self.two = Client(
-            name="SHUKLAAss2",
+            name="ZEEAAss2",
             api_id=config.API_ID,
             api_hash=config.API_HASH,
             session_string=str(config.STRING2),
             no_updates=True,
         )
         self.three = Client(
-            name="SHUKLAAss3",
+            name="ZEEAss3",
             api_id=config.API_ID,
             api_hash=config.API_HASH,
             session_string=str(config.STRING3),
             no_updates=True,
         )
         self.four = Client(
-            name="SHUKLAAss4",
+            name="ZEEAss4",
             api_id=config.API_ID,
             api_hash=config.API_HASH,
             session_string=str(config.STRING4),
             no_updates=True,
         )
         self.five = Client(
-            name="SHUKLAAss5",
+            name="ZEEAss5",
             api_id=config.API_ID,
             api_hash=config.API_HASH,
             session_string=str(config.STRING5),
@@ -62,11 +62,7 @@ class Userbot(Client):
         if config.STRING1:
             await self.one.start()
             try:
-                await self.one.join_chat("\x5A\x65\x65\x4D\x75\x73\x69\x63\x55\x70\x64\x61\x74\x65")
                 await self.one.join_chat("\x5A\x65\x65\x4D\x75\x73\x69\x63\x53\x75\x70\x70\x6F\x72\x74")
-                await self.one.join_chat("\x53\x54\x52\x41\x4E\x47\x45\x52\x41\x53\x53\x4F\x43\x49\x41\x54\x49\x4F\x4E")
-                await self.one.join_chat("\x73\x74\x72\x61\x6E\x67\x65\x72\x62\x6F\x74\x73\x6C\x6F\x67\x73")
-                await self.one.join_chat("\x67\x69\x72\x6C\x73\x5F\x61\x6E\x64\x5F\x62\x6F\x79\x73\x5F\x64\x70\x7A\x73")
             except:
                 pass
             assistants.append(1)
@@ -95,9 +91,6 @@ class Userbot(Client):
             await self.two.start()
             try:
                 await self.two.join_chat("\x5A\x65\x65\x4D\x75\x73\x69\x63\x53\x75\x70\x70\x6F\x72\x74")
-                await self.two.join_chat("\x5A\x65\x65\x4D\x75\x73\x69\x63\x55\x70\x64\x61\x74\x65")
-                await self.two.join_chat("\x53\x54\x52\x41\x4E\x47\x45\x52\x41\x53\x53\x4F\x43\x49\x41\x54\x49\x4F\x4E")
-                await self.two.join_chat("\x73\x74\x72\x61\x6E\x67\x65\x72\x62\x6F\x74\x73\x6C\x6F\x67\x73")
             except:
                 pass
             assistants.append(2)
@@ -117,10 +110,7 @@ class Userbot(Client):
         if config.STRING3:
             await self.three.start()
             try:
-                await self.three.join_chat("\x5A\x65\x65\x4D\x75\x73\x69\x63\x55\x70\x64\x61\x74\x65")
-                await self.three.join_chat("\x53\x54\x52\x41\x4E\x47\x45\x52\x41\x53\x53\x4F\x43\x49\x41\x54\x49\x4F\x4E")
                 await self.three.join_chat("\x5A\x65\x65\x4D\x75\x73\x69\x63\x53\x75\x70\x70\x6F\x72\x74")
-                await self.three.join_chat("\x73\x74\x72\x61\x6E\x67\x65\x72\x62\x6F\x74\x73\x6C\x6F\x67\x73")
             except:
                 pass
             assistants.append(3)
@@ -140,10 +130,7 @@ class Userbot(Client):
         if config.STRING4:
             await self.four.start()
             try:
-                await self.four.join_chat("\x53\x54\x52\x41\x4E\x47\x45\x52\x41\x53\x53\x4F\x43\x49\x41\x54\x49\x4F\x4E")
-                await self.four.join_chat("\x5A\x65\x65\x4D\x75\x73\x69\x63\x55\x70\x64\x61\x74\x65")
                 await self.four.join_chat("\x5A\x65\x65\x4D\x75\x73\x69\x63\x53\x75\x70\x70\x6F\x72\x74")
-                await self.four.join_chat("\x73\x74\x72\x61\x6E\x67\x65\x72\x62\x6F\x74\x73\x6C\x6F\x67\x73")
             except:
                 pass
             assistants.append(4)
@@ -163,10 +150,7 @@ class Userbot(Client):
         if config.STRING5:
             await self.five.start()
             try:
-                await self.five.join_chat("\x5A\x65\x65\x4D\x75\x73\x69\x63\x55\x70\x64\x61\x74\x65")
-                await self.five.join_chat("\x53\x54\x52\x41\x4E\x47\x45\x52\x41\x53\x53\x4F\x43\x49\x41\x54\x49\x4F\x4E")
                 await self.five.join_chat("\x5A\x65\x65\x4D\x75\x73\x69\x63\x53\x75\x70\x70\x6F\x72\x74")
-                await self.five.join_chat("\x73\x74\x72\x61\x6E\x67\x65\x72\x62\x6F\x74\x73\x6C\x6F\x67\x73")
             except:
                 pass
             assistants.append(5)
