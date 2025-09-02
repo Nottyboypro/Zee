@@ -1,7 +1,7 @@
 from pyrogram import  filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup
 
-from ZEEMUSIC.utils.Shukla_font import Fonts
+from ZEEMUSIC.utils.Zee_font import Fonts
 from ZEEMUSIC import app
 
 @app.on_message(filters.command(["font", "fonts"]))
