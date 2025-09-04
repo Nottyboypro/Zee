@@ -1,15 +1,151 @@
-import asyncio, httpx, os, re, yt_dlp, logging
-
+import asyncio
+import os
+import re
+import json
 from typing import Union
-from pyrogram.types import Message
+
+import httpx
+import yt_dlp
 from pyrogram.enums import MessageEntityType
+from pyrogram.types import Message
 from youtubesearchpython.__future__ import VideosSearch
 
+from AviaxMusic.utils.database import is_on_off
+from AviaxMusic.utils.formatters import time_to_seconds
 
-def time_to_seconds(time):
-    stringt = str(time)
-    return sum(int(x) * 60**i for i, x in enumerate(reversed(stringt.split(":"))))
+import logging
 
+# Logging setup
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(asctime)s - %(levelname)s - %(message)s"
+)
+
+# JerryCoder API URLs
+AUDIO_API_URL = "https://jerrycoder.oggyapi.workers.dev/ytmp3"
+VIDEO_API_URL = "https://jerrycoder.oggyapi.workers.dev/ytmp4"
+
+async def get_stream_url(query: str, video: bool = False):
+    """
+    Get YouTube stream URL using JerryCoder API.
+    query -> youtube link or video id
+    video -> True for mp4, False for mp3
+    """
+    try:
+        # Agar user ne sirf video id diya hai toh usko link me convert karo
+        if len(query) == 11 and "http" not in query:
+            youtube_url = f"https://youtube.com/watch?v={query}"
+            logging.info(f"Converted Video ID to YouTube link: {youtube_url}")
+        else:
+            youtube_url = query
+            logging.info(f"Using YouTube link: {youtube_url}")
+
+        # Choose appropriate API endpoint
+        api_url = VIDEO_API_URL if video else AUDIO_API_URL
+        params = {"url": youtube_url}
+        
+        logging.info(f"Calling JerryCoder API: {api_url}")
+        logging.info(f"Params: {params}")
+
+        async with httpx.AsyncClient(timeout=30, verify=False) as client:
+            response = await client.get(api_url, params=params)
+
+        logging.info(f"API Response Status: {response.status_code}")
+
+        if response.status_code != 200:
+            logging.error(f"API Error: {response.text}")
+            return ""
+
+        data = response.json()
+        logging.info(f"API Response: {json.dumps(data, indent=2)}")
+
+        # Extract stream URL based on API response structure
+        if video:
+            # For video API
+            if data.get("status") and data.get("result"):
+                stream_url = data["result"].get("url", "")
+            else:
+                stream_url = ""
+        else:
+            # For audio API
+            if data.get("status"):
+                stream_url = data.get("url", "")
+            else:
+                stream_url = ""
+
+        if not stream_url:
+            logging.warning("Stream URL not found in API response!")
+            # Fallback to direct yt-dlp
+            return await get_stream_url_ytdlp(query, video)
+
+        logging.info(f"Final Stream URL: {stream_url[:100]}...")
+        return stream_url
+
+    except Exception as e:
+        logging.exception(f"Exception in get_stream_url: {str(e)}")
+        # Fallback to yt-dlp
+        return await get_stream_url_ytdlp(query, video)
+
+async def get_stream_url_ytdlp(query: str, video: bool = False):
+    """Fallback to yt-dlp if API fails"""
+    try:
+        format_select = 'bestvideo[height<=720]+bestaudio/best' if video else 'bestaudio/best'
+        
+        ydl_opts = {
+            'format': format_select,
+            'quiet': True,
+            'no_warnings': True,
+            'geo_bypass': True,
+        }
+        
+        with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(query, download=False)
+            stream_url = info.get('url', '')
+            
+            logging.info(f"YT-DLP Fallback URL: {stream_url[:100]}...")
+            return stream_url
+            
+    except Exception as e:
+        logging.error(f"YT-DLP Fallback also failed: {str(e)}")
+        return ""
+
+# Baaki sab code same rahega...
+# YouTubeAPI class aur baaki functions wohi rahenge
+# Bas get_stream_url function update ho gaya hai
+
+async def check_file_size(link):
+    async def get_format_info(link):
+        proc = await asyncio.create_subprocess_exec(
+            "yt-dlp",
+            "-J",
+            link,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE
+        )
+        stdout, stderr = await proc.communicate()
+        if proc.returncode != 0:
+            print(f'Error:\n{stderr.decode()}')
+            return None
+        return json.loads(stdout.decode())
+
+    def parse_size(formats):
+        total_size = 0
+        for format in formats:
+            if 'filesize' in format:
+                total_size += format['filesize']
+        return total_size
+
+    info = await get_format_info(link)
+    if info is None:
+        return None
+    
+    formats = info.get('formats', [])
+    if not formats:
+        print("No formats found.")
+        return None
+    
+    total_size = parse_size(formats)
+    return total_size
 
 async def shell_cmd(cmd):
     proc = await asyncio.create_subprocess_shell(
@@ -25,64 +161,6 @@ async def shell_cmd(cmd):
             return errorz.decode("utf-8")
     return out.decode("utf-8")
 
-
-
-# Logging setup
-logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(levelname)s - %(message)s"
-)
-
-API_URL = "https://nottyboyapii.jaydipmore28.workers.dev/youtube"
-API_KEY = "Nottyboy"
-
-
-
-async def get_stream_url(query: str, video: bool = False):
-    """
-    Get YouTube stream URL (mp3/mp4) using Nottyboy API.
-    query -> youtube link or video id
-    video -> True for mp4, False for mp3
-    """
-    try:
-        # Agar user ne sirf video id diya hai toh usko link me convert karo
-        if len(query) == 11 and "http" not in query:
-            youtube_url = f"https://youtube.com/watch?v={query}"
-            logging.info(f"User ne Video ID diya: {query}")
-            logging.info(f"Converted to YouTube link: {youtube_url}")
-        else:
-            youtube_url = query
-            logging.info(f"User ne YouTube link diya: {youtube_url}")
-
-        # API request banao
-        params = {"url": youtube_url, "apikey": API_KEY}
-        logging.info(f"Calling API: {API_URL} with params: {params}")
-
-        async with httpx.AsyncClient(timeout=60, verify=False) as client:
-            response = await client.get(API_URL, params=params)
-
-        logging.info(f"API Response Status: {response.status_code}")
-
-        if response.status_code != 200:
-            logging.error(f"API Error: {response.text}")
-            return ""
-
-        data = response.json()
-        logging.info(f"API Response JSON: {data}")
-
-        # mp3 ya mp4 url choose karo
-        stream_url = data.get("mp4") if video else data.get("mp3")
-
-        if not stream_url:
-            logging.warning("Stream URL not found in response!")
-            return ""
-
-        logging.info(f"Final Stream URL: {stream_url[:100]}...")  # safe print
-        return stream_url
-
-    except Exception as e:
-        logging.exception(f"Exception in get_stream_url: {str(e)}")
-        return ""
 
 class YouTubeAPI:
     def __init__(self):
@@ -171,14 +249,15 @@ class YouTubeAPI:
             thumbnail = result["thumbnails"][0]["url"].split("?")[0]
         return thumbnail
 
-    async def video(self, link: str, videoid: Union[bool, str] = None):
+    async def video(self, link: str, videoid: Union[bool, str] = None, video: bool = False):
         if videoid:
             link = self.base + link
         if "&" in link:
             link = link.split("&")[0]
-            
-        return await get_stream_url(link, True)
         
+        # VIDEO PARAMETER USE KARO - audio/video ke liye
+        stream_url = await get_stream_url(link, video=video)
+        return (1, stream_url) if stream_url else (0, "API Error: Stream URL not found")
 
     async def playlist(self, link, limit, user_id, videoid: Union[bool, str] = None):
         if videoid:
@@ -286,7 +365,7 @@ class YouTubeAPI:
         if videoid:
             link = self.base + link
         loop = asyncio.get_running_loop()
-
+        
         def audio_dl():
             ydl_optssx = {
                 "format": "bestaudio/best",
@@ -361,15 +440,40 @@ class YouTubeAPI:
         if songvideo:
             await loop.run_in_executor(None, song_video_dl)
             fpath = f"downloads/{title}.mp4"
-            return fpath
+            return fpath, True
         elif songaudio:
             await loop.run_in_executor(None, song_audio_dl)
             fpath = f"downloads/{title}.mp3"
-            return fpath
+            return fpath, True
         elif video:
-            downloaded_file = await get_stream_url(link, True)
-            direct = None
+            if await is_on_off(1):
+                direct = True
+                downloaded_file = await loop.run_in_executor(None, video_dl)
+            else:
+                # API se stream URL try karo pehle
+                stream_url = await get_stream_url(link, video=True)
+                if stream_url:
+                    return stream_url, False
+                else:
+                    # Fallback to download
+                    file_size = await check_file_size(link)
+                    if not file_size:
+                        print("None file Size")
+                        return None, True
+                    total_size_mb = file_size / (1024 * 1024)
+                    if total_size_mb > 250:
+                        print(f"File size {total_size_mb:.2f} MB exceeds the 100MB limit.")
+                        return None, True
+                    direct = True
+                    downloaded_file = await loop.run_in_executor(None, video_dl)
         else:
-            direct = None
-            downloaded_file = await get_stream_url(link, False)
+            # Audio ke liye bhi API try karo pehle
+            stream_url = await get_stream_url(link, video=False)
+            if stream_url:
+                return stream_url, False
+            else:
+                # Fallback to download
+                direct = True
+                downloaded_file = await loop.run_in_executor(None, audio_dl)
+        
         return downloaded_file, direct
